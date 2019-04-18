@@ -22,20 +22,14 @@ class LockInSR830(BaseInstrument):
         self.logger = logging.getLogger(__name__)
         self.logger.info('Class LockInSR830 created.')
 
-        self.controller = None
-        self.controller_class = None
         self._port = settings['port']
         self.dummy = settings['dummy']
         self.logger.debug('Creating the instance of the controller')
-        self.controller_class = self.load_controller(settings['controller'])
-        self.controller = self.controller_class(self._port, dummy=self.dummy)
-
 
         self.controller = SR830.via_gpib(self._port)
 
     def initialize(self):
-        """ Starts the connection to the device in the port defined during the instantiation
-
+        """ Starts the connection to the device
         """
         self.logger.info('Opening connection to device.')
         self.controller.initialize()
@@ -80,13 +74,7 @@ if __name__ == "__main__":
         handlers=[logging.handlers.RotatingFileHandler("logger.log", maxBytes=(1048576*5), backupCount=7),
                   logging.StreamHandler()])
 
-    with ExampleInstrument() as dev:
-        dev.initialize('COM10')
-        print(dev.amplitude)
-        v = 2 * ur('volts')
-        dev.amplitude = v
-        print(dev.amplitude)
-        dev.amplitude = v
-        print(dev.amplitude)
-
+    with LockInSR830(settings={'port':'3','dummy':False}) as dev:
+        dev.initialize()
+        print('Identification = {}.'.format(dev.idn()))
 
