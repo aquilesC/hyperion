@@ -3,7 +3,21 @@
 Thorlabs motors Instrument
 ================
 
-Connects now to the TDC001 controller.
+Connects for now to the TDC001 controller.
+
+Example:
+
+```python
+    >>> from hyperion.intstrument.Motors.Thorlabsmotor import Thorlabsmotor
+	>>> checkdevices = Thorlabsmotor()
+	>>> checkdevices.list_available_device()
+	>>> [(31,81818251)]
+    >>> motorx = Thorlabsmotor()
+	>>> motorx.initialize(81818251)
+    >>> motorx.move_home(True)
+    >>> motorx.move_by(0.01)
+```
+
 
 """
 import logging
