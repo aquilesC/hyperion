@@ -1,15 +1,15 @@
 """
 ================
-Dummy Instrument
+Stanford Instruments SR830 Lock-In
 ================
 
-This is a dummy device, simulated for developing and testing the code
+This class (lock_in_SR830.py) is the model to control the lock-in amplifier SR830
+It ads the use of units with pint
 
 """
 import logging
 from hyperion.instrument.base_instrument import BaseInstrument
 from hyperion import ur
-from lantz.drivers.stanford.sr830 import SR830
 
 
 class LockInSR830(BaseInstrument):
@@ -25,8 +25,8 @@ class LockInSR830(BaseInstrument):
         self._port = settings['port']
         self.dummy = settings['dummy']
         self.logger.debug('Creating the instance of the controller')
-
-        self.controller = SR830.via_gpib(self._port)
+        self.controller_class = self.load_controller(settings['controller'])
+        self.controller = self.controller_class.via_gpib(self._port)
 
     def initialize(self):
         """ Starts the connection to the device
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         handlers=[logging.handlers.RotatingFileHandler("logger.log", maxBytes=(1048576*5), backupCount=7),
                   logging.StreamHandler()])
 
-    with LockInSR830(settings={'port':'3','dummy':False}) as dev:
+    with LockInSR830(settings={'port':'3','dummy':False,'controller': 'lantz.drivers.stanford.sr830/SR830'}) as dev:
         dev.initialize()
         print('Identification = {}.'.format(dev.idn()))
 
