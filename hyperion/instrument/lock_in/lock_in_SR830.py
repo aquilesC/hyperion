@@ -8,28 +8,28 @@ This is a dummy device, simulated for developing and testing the code
 """
 import logging
 from hyperion.instrument.base_instrument import BaseInstrument
-from hyperion.controller.example_controller import ExampleController
 from hyperion import ur
-import lantz.drivers.stanford.sr830 as LockIn
+from lantz.drivers.stanford.sr830 import SR830
 
-class ExampleInstrument(BaseInstrument):
+
+class LockInSR830(BaseInstrument):
     """ Example instrument. it is a fake instrument
 
     """
-    def __init__(self, settings = {}):
+    def __init__(self, settings = {'port':'3'}):
         """ init of the class"""
         self.logger = logging.getLogger(__name__)
-        self.logger.info('Class ExampleInstrument created.')
-        self.controller = ExampleController()
+        self.logger.info('Class LockInSR830 created.')
+        self._port = settings['port']
 
-    def initialize(self, port):
-        """ Starts the connection to the device in port
+        self.controller = SR830.via_gpib(self._port)
 
-        :param port: port name to connect to
-        :type port: string
+    def initialize(self):
+        """ Starts the connection to the device in the port defined during the instantiation
+
         """
         self.logger.info('Opening connection to device.')
-        self.controller.initialize(port)
+        self.controller.initialize()
 
     def finalize(self):
         """ this is to close connection to the device."""
@@ -44,7 +44,7 @@ class ExampleInstrument(BaseInstrument):
 
         """
         self.logger.debug('Ask IDN to device.')
-        return self.controller.idn()
+        return self.controller.query('*IDN?')
 
 
     @property

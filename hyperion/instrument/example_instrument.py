@@ -10,6 +10,7 @@ import logging
 from hyperion.instrument.base_instrument import BaseInstrument
 from hyperion.controller.example_controller import ExampleController
 from hyperion import ur
+import lantz.drivers.stanford.sr830 as LockIn
 
 class ExampleInstrument(BaseInstrument):
     """ Example instrument. it is a fake instrument
