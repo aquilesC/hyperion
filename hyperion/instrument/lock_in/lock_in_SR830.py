@@ -16,11 +16,20 @@ class LockInSR830(BaseInstrument):
     """ Example instrument. it is a fake instrument
 
     """
-    def __init__(self, settings = {'port':'3'}):
+    def __init__(self, settings = {'port':'3','dummy': True,
+                                   'controller': 'lantz.drivers.stanford.sr830/SR830'}):
         """ init of the class"""
         self.logger = logging.getLogger(__name__)
         self.logger.info('Class LockInSR830 created.')
+
+        self.controller = None
+        self.controller_class = None
         self._port = settings['port']
+        self.dummy = settings['dummy']
+        self.logger.debug('Creating the instance of the controller')
+        self.controller_class = self.load_controller(settings['controller'])
+        self.controller = self.controller_class(self._port, dummy=self.dummy)
+
 
         self.controller = SR830.via_gpib(self._port)
 

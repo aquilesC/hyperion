@@ -9,7 +9,6 @@ This is a dummy device, simulated for developing and testing the code
 import logging
 from hyperion.instrument.base_instrument import BaseInstrument
 from hyperion import ur
-import lantz.drivers.stanford.sr830 as LockIn
 
 class ExampleInstrument(BaseInstrument):
     """ Example instrument. it is a fake instrument
