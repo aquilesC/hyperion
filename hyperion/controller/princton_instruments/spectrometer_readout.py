@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-==================
-Example controller
-==================
+================
+Dummy controller
+================
 
-This is an example of a controller with a fake (invented) device. It should help to gide
-developers to create new controllers for real devices.
+This is a fake device, simulated for developing and testing the code.
+It can be used as an example to build your own controller for your device.
 
 
 """
@@ -18,27 +18,27 @@ class ExampleController(BaseController):
     FAKE_RESPONSES = {'A': 1,
                      }
 
-    def __init__(self, settings = {'port':'COM10', 'dummy': False}):
+    def __init__(self, port, dummy = True):
         """ Init of the class.
 
-        :param settings: this includes all the settings needed to connect to the device in question.
-        :type settings: dict
-
+        :param port: connection port to use
+        :type port: str
+        :param dummy: if the device connects to the real or not. in this case is useless, this is a dummy inivented device
+        :type dummy: logical
         """
-        super().__init__(settings)  # mandatory line
+        self._port = port
+        self.dummy = dummy
         self.logger = logging.getLogger(__name__)
+        self._is_initialized = False
         self.logger.info('Class ExampleController created.')
-        self.name = 'Example Controller'
-
         self._amplitude = []
 
     def initialize(self):
         """ Starts the connection to the device in port """
-        self.logger.info('Opening connection to device ExampleController (a fake connection)')
-        self._is_initialized = True     # THIS IS MANDATORY!!
-                                        # this is to prevent you to close the device connection if you
-                                        # have not initialized it inside a with statement
+        self.logger.info('Opening connection to device in port {}.'.format(self._port))
         self._amplitude = self.query('A?')
+        self._is_initialized = True     # this is to prevent you to close the device connection if you
+                                        # have not initialized it inside a with statement
 
     def finalize(self):
         """ This method closes the connection to the device.
@@ -46,7 +46,6 @@ class ExampleController(BaseController):
 
         """
         self.logger.info('Closing connection to device.')
-        self._is_initialized = False
 
     def idn(self):
         """ Identify command
@@ -55,7 +54,7 @@ class ExampleController(BaseController):
         :rtype: string
         """
         self.logger.debug('Ask IDN to device.')
-        return 'ExampleController device'
+        return 'Dummy Output controller'
 
     def query(self, msg):
         """ writes into the device msg
@@ -63,7 +62,7 @@ class ExampleController(BaseController):
         :param msg: command to write into the device port
         :type msg: string
         """
-        self.logger.debug('Writing into the example device:{}'.format(msg))
+        self.logger.info('Writing into the example device:{}'.format(msg))
         self.write(msg)
         ans = self.read()
         return ans
@@ -128,13 +127,9 @@ class ExampleController(BaseController):
 
 
 class ExampleControllerDummy(ExampleController):
-    """
-    Example Controller Dummy
-    ========================
+    """ A dummy version of the Example Controller.
 
-    A dummy version of the Example Controller.
-
-    In essence we have the same methods and we re-write the query to answer something meaningful but
+    In essence we have the same methods and we re-write the query to answer something meaninfull but
     without connecting to the real device.
 
     """
@@ -147,7 +142,7 @@ class ExampleControllerDummy(ExampleController):
         :type msg: string
         """
         self.logger.debug('Writing into the dummy device:{}'.format(msg))
-        ans = 'A general dummy answer'
+        ans = 'dummy answer'
         return ans
 
 
@@ -158,15 +153,8 @@ if __name__ == "__main__":
         handlers=[logging.handlers.RotatingFileHandler("logger.log", maxBytes=(1048576*5), backupCount=7),
                   logging.StreamHandler()])
 
-    dummy = False  # change this to false to work with the real device in the COM specified below.
-
-    if dummy:
-        my_class = ExampleControllerDummy
-    else:
-        my_class = ExampleController
-
-    with my_class(settings = {'dummy':dummy}) as dev:
-        dev.initialize()
+    with ExampleController() as dev:
+        dev.initialize('COM10')
         print(dev.amplitude)
         dev.amplitude = 5
         print(dev.amplitude)

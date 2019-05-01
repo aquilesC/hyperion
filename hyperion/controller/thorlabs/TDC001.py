@@ -12,7 +12,7 @@ Python package wrapping Thorlabs' APT.dll shared library.
 
 **List of reported working devices**
 
-I have tested thorlabs_apt only with the K10CR1 rotation stage, but it should work with all motors supported by APT. If it works with other motors as well, please let me know and I will add it here. Otherwise file a bug report or fix the problem yourself and open a pull request.
+I have tested thorlabs_apt only with the K10CR1 rotation stage, but it should work with all motor supported by APT. If it works with other motor as well, please let me know and I will add it here. Otherwise file a bug report or fix the problem yourself and open a pull request.
 
 
 
@@ -126,7 +126,7 @@ import platform
 
 class TDC001(BaseController):
     """
-    Class TDC001 to control the DC stepper motors from Thorlabs
+    Class TDC001 to control the DC stepper motor from Thorlabs
     """
     
     _lib = None
@@ -292,10 +292,10 @@ class TDC001(BaseController):
                     self._get_error_text(err_code))
         return (model.value, swver.value, hwnotes.value)
 
-    def __init__(self):
+    def __init__(self, settings):
         """ Init of the class. """
+        super().__init__()  # runs the init of the base_controller class.
         self.logger = logging.getLogger(__name__)
-        self._is_initialized = False
         self.logger.info('Class ExampleController created.')
         self._amplitude = []
         self._lib = self._load_library()
@@ -469,7 +469,7 @@ class TDC001(BaseController):
     @property
     def active_channel(self):
         """
-        Active channel number. Used with motors having more than 1 channel.
+        Active channel number. Used with motor having more than 1 channel.
 
         CHAN1_INDEX = 0 : channel 1
         CHAN2_INDEX = 1 : channel 2
@@ -696,7 +696,7 @@ class TDC001(BaseController):
 
     def set_motor_parameters(self, steps_per_rev, gear_box_ratio):
         """
-        Sets motor parameters. Note that this is not possible with all motors,
+        Sets motor parameters. Note that this is not possible with all motor,
         see documentation from Thorlabs.
 
         Parameters

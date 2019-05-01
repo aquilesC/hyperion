@@ -17,4 +17,8 @@ in another setup.
     instrument/fun_gen
     instrument/polarimeter
     instrument/variable_waveplate
+<<<<<<< HEAD
     instrument/Thorlabsmotor_instrument
+=======
+    instrument/hydraharp_instrument
+>>>>>>> origin/develop

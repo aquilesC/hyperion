@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-    ===========
-    AOTF driver
-    ===========
+    ===============
+    AOTF controller
+    ===============
 
     This controller (aa_modd18012.py) supplies one class with several methods to communicate
     with the AOTF driver from AA optoelectronics model: 1MODD18012_0074
 
-    :copyright: (c)
-    :license: , see LICENSE for more details.
+
 """
 import serial
 from time import sleep
@@ -385,12 +384,12 @@ if __name__ == "__main__":
     with AaModd18012('COM10', dummy=True) as dev:
         dev.initialize()
 
-        # test basic for dummy device
+        # unit_test basic for dummy device
         # dev.write('TESTING WRITE')
         # print(dev.read())
         # print(dev.query('hola'))
 
-        # test set all
+        # unit_test set all
         for ch in range(1, 9):
             print(dev.set_all(ch, 0, 22, False, 'internal'))
             sleep(0.1)
