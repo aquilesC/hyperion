@@ -40,7 +40,7 @@ class BaseExperiment():
         self.logger.debug('Loading configuration file: {}'.format(filename))
 
         with open(filename, 'r') as f:
-            d = yaml.load(f)
+            d = yaml.load(f, Loader=yaml.FullLoader)
             self.logger.info('Using configuration file: {}'.format(filename))
 
         self.properties = d
@@ -62,9 +62,7 @@ class BaseExperiment():
         :param name: name of the instrument to load
         :type name: string
         """
-
         self.logger.debug('Loading instrument: {}'.format(name))
-
         for inst in self.properties['Instruments']:
             self.logger.debug('instrument name: {}'.format(inst))
 
