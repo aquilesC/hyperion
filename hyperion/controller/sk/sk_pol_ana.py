@@ -27,9 +27,7 @@ class Skpolarimeter(BaseController):
         """
         self.logger = logging.getLogger(__name__)
 
-        # TODO: put this in a config_agilent33522A.yml file so the code doe not depend on the location (PC)
-        # path = 'C:/Users/mcaldarola/Documents/SK Develop/SKPolarizationAnalyzer/'
-        # name = 'SKPolarimeterManaged'
+        # TODO: put this in a config.yml file so the code doe not depend on the location (PC)
         path = 'C:/Users/mcaldarola/surfdrive/NanoCD/Setup/SK/SKPolarimeterMFC_VS2015_x64/x64/Release/'
         name = 'SKPolarimeter'
         self.logger.debug('DLL to use: {}'.format(path + name))
