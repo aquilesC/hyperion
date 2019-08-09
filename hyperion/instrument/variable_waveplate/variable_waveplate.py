@@ -281,7 +281,7 @@ class VariableWaveplate(BaseInstrument):
         """
         self.logger.debug('Getting the quarter waveplate voltage')
         v = self.quarter_waveplate_voltage(wavelength)
-        self.logger.debug('The QWP voltage for {} is {}'.format(wavelength, v))
+        self.logger.info('The QWP voltage for {} is {}'.format(wavelength, v))
         self.logger.debug('Setting the voltage to the QWP voltage on channel {}'.format(ch))
         self.set_analog_value(ch, v)
 
@@ -330,7 +330,8 @@ if __name__ == '__main__':
             #     logging.info('Current freq: {}'.format(dev.freq))
 
             # set the quater waveplate voltage in voltage1
-            wavelength = 633* ur('nanometer')
+            dev.mode = 1
+            wavelength = 530* ur('nanometer')
             dev.set_quarter_waveplate_voltage(1, wavelength)
 
         print('Done with dummy={}'.format(dummy))

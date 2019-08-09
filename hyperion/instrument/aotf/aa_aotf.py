@@ -313,12 +313,13 @@ if __name__ == '__main__':
 
 
         # to do a manual-saving wavelength scan with photothermal
-        wl = np.linspace(625,700,4)* ur('nanometer')
+        #wl = np.linspace(532,700,1)* ur('nanometer')
+        wl = [532]* ur('nanometer')
         print(wl)
         for value in wl:
             print('This wavelength: {}'.format(value))
             # d.set_frequency_all_range(d.wavelength_to_frequency(value), 22, True, 'internal')
-            d.set_wavelength(value, 22, True, 'external')
+            d.set_wavelength(value, 20, True, 'external')
             ans = input('The wavelength is {}. Press enter for the next or press q for quiting... '.format(value))
             if ans=='q':
                 print('Quiting')
