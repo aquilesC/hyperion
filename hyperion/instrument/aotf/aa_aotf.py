@@ -30,14 +30,16 @@ class AaAotf(BaseInstrument):
     It implements another layer in the MVC design, adding calibration and units functionality.
 
     """
-    DEFAULT_SETTINGS = {'frequency': [85, 95, 105, 115, 125, 145, 70, 80],
+    DEFAULT_SETTINGS = {'frequency': [85, 95, 105, 115, 125, 145, 70, 80]*ur('MHz'),
                         'power': [20, 20, 20, 20, 20, 20, 20, 20],
                         'state': False,
                         'mode': 'internal',
+                        'wavelength' : 532*ur('nm')
                         }
 
     def __init__(self, settings = {'port':'COM8', 'enable': False, 'dummy' : False,
-                                   'controller': 'hyperion.controller.aa.aa_modd18012/AaModd18012'} ):
+                                   'controller': 'hyperion.controller.aa.aa_modd18012/AaModd18012',
+                                   'defaults': False, 'working mode' : 'wavelength'} ):
         """
         Init of the class.
 
@@ -47,6 +49,8 @@ class AaAotf(BaseInstrument):
             * enable: logical to say if the initialize enables the output
             * dummy: logical to say if the connection is real or dummy (True means dummy)
             * controller: this should point to the controller to use and with / add the name of the class to use
+            * defaults: Logical state that tells weather to apply defaults settings or not
+            * working mode: 'wavelength' would start with the wavelength mode, 'frequency' uses directly the frequency (no calibration required)
 
         Note: When you set the setting 'dummy' = True, the controller to be loaded is the dummy one by default,
         i.e. the class will overwrite the 'controller' with 'hyperion.controller.aa.aa_modd18012/AaModd18012Dummy'
@@ -58,15 +62,49 @@ class AaAotf(BaseInstrument):
         self.dummy = settings['dummy']
 
         #
-        self.channel_in_use = None
+        self._channel_in_use = None
         self.logger.info('Initializing device AOTF with Aotf_model at port = {}'.format(self._port))
         self.controller = AaModd18012(settings)
-        self.controller.initialize()
+
+        # keep the values
+        self._frequencies = self.DEFAULT_SETTINGS['frequency']
+        self._powers = self.DEFAULT_SETTINGS['power']
+        self._states = [self.DEFAULT_SETTINGS['state']]*len(self._frequencies)
+        self._modes = [self.DEFAULT_SETTINGS['mode']]*len(self._frequencies)
+        self._blanking = [None, None]
+
+
 
         # loads the calibration file to transform freq to wavelength.
         cal_file = os.path.join(root_dir, 'instrument', 'aotf', 'lookup_table_cal_aotf_2019-02-05.txt')
         self.logger.info('Using freq to wavelength calibration for aotf from file {}'.format(cal_file))
         self.load_calibration(cal_file)
+        self._wavelength = None
+
+        self.logger.debug('Display internal values: \n  frequencies = {} \n '
+                          ' powers= {} \n  states = {} \n  modes = {} \n '
+                          ' blanking {} \n  wavelength = {}'.format(self._frequencies, self._powers, self._states,
+                                                                    self._modes, self._blanking, self._wavelength))
+
+        # apply defaults if asked
+        if 'default' in settings:
+            if settings['default']:
+                self.initialize()
+                self.set_defaults()
+
+        if 'working mode' in settings:
+            if settings['working mode'] == 'wavelength':
+                self.logger.info('Setting the working mode to wavelength with the default wavelength.')
+                self.initialize()
+                self.set_wavelength(self.DEFAULT_SETTINGS['wavelength'], self.DEFAULT_SETTINGS['power'][0])
+
+    def initialize(self):
+        """ Initializes the connection with the device"""
+        if not self.controller._is_initialized:
+            self.logger.info('Initiliazing connection to the AOTF device.')
+            self.controller.initialize()
+        else:
+            self.logger.warning('The device AOTF is already initialized')
 
     def load_calibration(self, cal_file):
         """ This method loads the calibration file cal_file
@@ -154,6 +192,11 @@ class AaAotf(BaseInstrument):
     """
         self.logger.debug('Setting all parameters.')
         ans = self.controller.set_all(channel, freq.m_as('megahertz'), power, state, mode)
+        self.logger.debug('Updating internal values...')
+        self._frequencies[channel - 1] = freq
+        self._powers[channel - 1 ] = power
+        self._states[channel - 1] = state
+        self._modes[channel - 1] = mode
         return ans
 
     def set_defaults(self, channel):
@@ -170,7 +213,7 @@ class AaAotf(BaseInstrument):
         self.logger.debug('State: {}'.format(self.DEFAULT_SETTINGS['state']))
         self.logger.debug('Mode: {}'.format(self.DEFAULT_SETTINGS['mode']))
 
-        self.controller.set_all(channel, self.DEFAULT_SETTINGS['frequency'][channel - 1],
+        self.controller.set_all(channel, self.DEFAULT_SETTINGS['frequency'][channel - 1].m_as('MHz'),
                             self.DEFAULT_SETTINGS['power'][channel - 1],
                             self.DEFAULT_SETTINGS['state'], self.DEFAULT_SETTINGS['mode'])
 
@@ -189,19 +232,36 @@ class AaAotf(BaseInstrument):
         """
         # select the channel to turn on based on the frequency.
         ch = self.choose_channel(freq)
-        if self.channel_in_use == ch:
+        if self._channel_in_use == ch:
             self.logger.debug('Continue with the same channel.')
         else:
-            self.logger.info('Changed from channel {} to channel {}.'.format(self.channel_in_use, ch))
-            self.logger.debug('Turn off channel {}.'.format(self.channel_in_use))
-            if self.channel_in_use is not None:
-                self.controller.enable(self.channel_in_use, False)
+            self.logger.info('Changed from channel {} to channel {}.'.format(self._channel_in_use, ch))
+            self.logger.debug('Turn off channel {}.'.format(self._channel_in_use))
+            if self._channel_in_use is not None:
+                self.controller.enable(self._channel_in_use, False)
                 sleep(1)
                 self.controller.enable(ch, True)
 
+
         ans = self.set_all_values(ch, freq, power, state, mode)
-        self.channel_in_use = ch
+        self._channel_in_use = ch
+        self._frequencies[ch - 1] = freq
+        self._modes[ch -1] = mode
+        self._powers[ch -1] = power
+        self._states[ch -1] = state
         return ans
+
+    def enable(self, channel, state):
+        """ Sets the output to the logical value 'state'
+
+        :param channel: channel to set (1 to 8)
+        :type channel: int
+        :param state: state to set
+        :type state: logical
+
+        """
+        self.controller.enable(channel, state)
+        self._states[channel-1] = state
 
     def set_wavelength(self, wl, power, state=True, mode='internal'):
         """ This sets the wavelength wl by using the calibration file.
@@ -219,6 +279,7 @@ class AaAotf(BaseInstrument):
         :rtype: string
         """
         self.logger.debug('Get the frequency for the the wavelength: {}'.format(wl))
+        self._wavelength = wl
         F = self.wavelength_to_frequency(wl)
         self.logger.debug('Frequency for {} is = {}'.format(wl, F))
         self.logger.info(
@@ -244,6 +305,7 @@ class AaAotf(BaseInstrument):
         :type mode: string
         """
         self.controller.blanking(state, mode)
+        self._blanquing= [state, mode]
 
     def get_status(self):
         """ Gets the status of all channels in the controller
@@ -257,7 +319,7 @@ class AaAotf(BaseInstrument):
 if __name__ == '__main__':
     from hyperion import _logger_format, _logger_settings
 
-    logging.basicConfig(level=logging.INFO, format=_logger_format,
+    logging.basicConfig(level=logging.DEBUG, format=_logger_format,
                         handlers=[
                             logging.handlers.RotatingFileHandler(_logger_settings['filename'],
                                                                  maxBytes=_logger_settings['maxBytes'],
@@ -266,7 +328,7 @@ if __name__ == '__main__':
 
     with  AaAotf(settings={'port':'COM10', 'dummy':False,
                            'controller': 'hyperion.controller.aa.aa_modd18012/AaModd18012'}) as d:
-
+        d.initialize()
         d.blanking(True, mode='internal')
 
         # get status
@@ -313,15 +375,16 @@ if __name__ == '__main__':
 
 
         # to do a manual-saving wavelength scan with photothermal
-        wl = np.linspace(625,700,4)* ur('nanometer')
+        print(d._wavelength)
+        wl = np.linspace(625,700,2)* ur('nanometer')
         print('Wavelengths to use in the for: {}'.format(wl))
         for value in wl:
             print('Setting wavelength: {}'.format(value))
             # d.set_frequency_all_range(d.wavelength_to_frequency(value), 22, True, 'internal')
             d.set_wavelength(value, 22, True, 'external')
-            ans = input('Now the wavelength is {}. Press enter for the next step or input "q" for quiting... '.format(value))
-            if ans=='q':
-                print('Quiting')
-                break
+            #ans = input('Now the wavelength is {}. Press enter for the next step or input "q" for quiting... '.format(value))
+            #if ans=='q':
+                #print('Quiting')
+                #break
 
         print('done')
