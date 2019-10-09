@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from hyperion.instrument.beam_flags.beam_flags_instr import BeamFlagsInstr
 from hyperion.view.general_worker import WorkThread
+import logging
 
 class BeamFlagsGui(QWidget):
     """
@@ -72,8 +73,8 @@ class BeamFlagsGui(QWidget):
             self.bf_settings[flag_id]['label'] = label
             button = QPushButton(gui_flag['name'], self)
 
-            button.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
-            label.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+            button.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
+            label.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
 
             button.pressed.connect( lambda x=flag_id: self.button_clicked(x) )
             if 'shortkey' in gui_flag:

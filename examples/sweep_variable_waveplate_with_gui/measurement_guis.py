@@ -131,7 +131,7 @@ class FlagsExampleMeasurementGui(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        self.start_button = QPushButton('Start sweep', self)
+        self.start_button = QPushButton('Start Flags', self)
         self.start_button.setToolTip('This is an example button')
         self.start_button.move(100, 70)
         self.start_button.clicked.connect(self.start_button_clicked)

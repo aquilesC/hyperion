@@ -392,55 +392,65 @@ class MasterGui(QMainWindow):
         Through this way they can later be retrieved in the self object.
         """
         self.logger.debug('Loading interfaces')
-        for measurement in self.experiment.properties["Measurements"]:
-            measurement_name = self.experiment.properties["Measurements"][measurement]
-            if 'graphView' in measurement_name:
-                inst = self.load_graph_gui(measurement, measurement_name['graphView'])
-            if 'view' in measurement_name:
-                self.load_measurement_gui(measurement, measurement_name['view'], inst)
+        for meas_name in self.experiment.properties["Measurements"]:
+            meas_config = self.experiment.properties["Measurements"][meas_name]
+            if 'graphView' in meas_config:
+                inst = self.load_graph_gui(meas_name, meas_config['graphView'])
+            if 'view' in meas_config:
+                self.load_measurement_gui(meas_name, meas_config['view'], inst)
 
         for instrument_name in self.experiment.properties['Instruments']:
-            name_of_instrument = self.experiment.properties['Instruments'][instrument_name]
-            if "graphView" in name_of_instrument:
-                self.load_graph_gui(instrument_name, name_of_instrument['graphView'])
-                # check to see if there is an instrument gui for this instrument:
-                if "view" in name_of_instrument:
-                    self.load_instrument_gui(instrument_name)
+            if instrument_name not in self.experiment.instruments_instances:
+                self.logger.warning("Can't try to load GUI for {} because instrument doesn't exist in experiment".format(instrument_name))
             else:
-                # check if there is gui available for this instrument
-                if "view" in name_of_instrument:
-                    self.load_instrument_gui(instrument_name)
+                instr_config = self.experiment.properties['Instruments'][instrument_name]
+                instr_obj = self.experiment.instruments_instances[instrument_name]
+                if "graphView" in instr_config:
+                    output_obj = self.load_graph_gui(instrument_name, instr_config['graphView'])
+                else:
+                    output_obj = None
+                if "view" not in instr_config:
+                    self.logger.info("No GUI for {}".format(instrument_name))
+                else:
+                    self.logger.debug("Creating instrument view object")
+                    module_name, class_name = instr_config['view'].split('/')
+                    MyClass = getattr(importlib.import_module(module_name), class_name)
+                    if output_obj == None:
+                        view_obj = MyClass(instr_obj)
+                    else:
+                        view_obj = MyClass(instr_obj, output_obj)
+                    self.experiment.view_instances[instrument_name] = view_obj
 
-    def load_instrument_gui(self, name):
-        """
-        Create instances of instrument gui's and set these in the self.experiment.view_instaces()
-
-        :param name: name of view to load. It has to be specified in the config file under Instruments
-        :type name: string
-        """
-        self.logger.info('Loading instrument: {}'.format(name))
-        try:
-            instr_config = self.experiment.properties['Instruments'][name]
-            self.logger.debug('Instruments list: {}'.format(instr_config))
-            module_name, class_name = instr_config['view'].split('/')
-            MyClass = getattr(importlib.import_module(module_name), class_name)
-            #instr is variable that will be the instrument name of a device. For example: OsaInstrument.
-            instr = ((instr_config['instrument']).split('/')[1])
-            #self.experiment.instruments_instances[instr] = the name of the instrument for a device. This is necessary
-            #to communicate between instrument and view. Instance is still an instance of for example OsaView.
-            self.logger.debug('Current view class: {}'.format(MyClass))
-            try:
-                instance = MyClass(self.experiment.instruments_instances[instr])
-                self.logger.debug('{} view object created'.format(name))
-            except Exception:
-                #this is necessary to initialise gui's which need to connect to a graph gui.
-                instance = MyClass(self.experiment.instruments_instances[instr], self.experiment.graph_view_instance[name + "Graph"])
-                self.logger.debug('Instance in the Exception: {}'.format(instance))
-            self.experiment.view_instances[name] = instance
-        except KeyError:
-            print("the view key(aka,"+str(name)+") does not exist in properties.\n This not a bad thing, if there is a gui, "
-                                                "then you can ignore this message.\n")
-            return None
+    # def load_instrument_gui(self, name):
+    #     """
+    #     Create instances of instrument gui's and set these in the self.experiment.view_instaces()
+    #
+    #     :param name: name of view to load. It has to be specified in the config file under Instruments
+    #     :type name: string
+    #     """
+    #     self.logger.info('Loading instrument: {}'.format(name))
+    #     try:
+    #         instr_config = self.experiment.properties['Instruments'][name]
+    #         self.logger.debug('Instruments list: {}'.format(instr_config))
+    #         module_name, class_name = instr_config['view'].split('/')
+    #         MyClass = getattr(importlib.import_module(module_name), class_name)
+    #         #instr is variable that will be the instrument name of a device. For example: OsaInstrument.
+    #         instr = ((instr_config['instrument']).split('/')[1])
+    #         #self.experiment.instruments_instances[instr] = the name of the instrument for a device. This is necessary
+    #         #to communicate between instrument and view. Instance is still an instance of for example OsaView.
+    #         self.logger.debug('Current view class: {}'.format(MyClass))
+    #         try:
+    #             instance = MyClass(self.experiment.instruments_instances[instr])
+    #             self.logger.debug('{} view object created'.format(name))
+    #         except Exception:
+    #             #this is necessary to initialise gui's which need to connect to a graph gui.
+    #             instance = MyClass(self.experiment.instruments_instances[instr], self.experiment.graph_view_instance[name + "Graph"])
+    #             self.logger.debug('Instance in the Exception: {}'.format(instance))
+    #         self.experiment.view_instances[name] = instance
+    #     except KeyError:
+    #         print("the view key(aka,"+str(name)+") does not exist in properties.\n This not a bad thing, if there is a gui, "
+    #                                             "then you can ignore this message.\n")
+    #         return None
 
     def load_measurement_gui(self, name, view_path, graph = None):
         """ Loads the measurement gui. The controls, called view and the graph.
