@@ -105,6 +105,16 @@ class ExampleExperimentPolarimeter(BaseExperiment):
         self.instruments_instances['VariableWaveplate'].output = False
         self._sweep_waveplate_polarimeter_in_progress = False           # always set the "in progress" flag False at the end of a measurement method
 
+    def meas_example_flags(self):
+        self.instruments_instances['BeamFlags'].set_specific_flag_state('1', 'r')
+        sleep(1)
+        self.instruments_instances['BeamFlags'].set_specific_flag_state('2', 'r')
+        sleep(1)
+        self.instruments_instances['BeamFlags'].set_specific_flag_state('1', 'g')
+        sleep(1)
+        self.instruments_instances['BeamFlags'].set_specific_flag_state('2', 'g')
+
+
 
 if __name__ == '__main__':
     from hyperion import _logger_format
@@ -125,10 +135,6 @@ if __name__ == '__main__':
         # read properties just loaded
         print('\n {} \n'.format(e.properties))
 
-        #  remember you can change these values directly here
-        #e.properties['Scan']['start'] = '0.5V'
-
-
         # # Initialize devices
         print('\n-------------- LOADING DEVICES ----------------\n')
         e.load_instruments()
@@ -136,21 +142,9 @@ if __name__ == '__main__':
         print('-------------- DONE LOADING DEVICES ----------------')
         #
 
-        # save metadata
-        #e.save_scan_metadata()
-        #e.save_scan_metadata()
+        # e.sweep_waveplate_polarimeter()
 
-        # perform scan
-        # e.set_scan()
-        e.sweep_waveplate_polarimeter()
-
-        # if you want to use the instruments directly, you can:
-        # wl = 532*ur('nm')
-        # e.instruments_instances['Polarimeter'].initialize(wavelength = wl)
-        # data = e.instruments_instances['Polarimeter'].get_multiple_data(2)
-        # print('\n\n {} \n\n'.format(data))
-        #
-        # print(e.instruments_instances['VariableWaveplate'].controller._is_initialized)
+        e.meas_example_flags()
 
         # make sound
         e.make_sound()

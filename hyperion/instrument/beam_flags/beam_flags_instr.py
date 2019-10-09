@@ -65,6 +65,8 @@ class BeamFlagsInstr(BaseInstrument):
         # information from the Serial Buffer In whenever the state is required.
         self._use_passive_queries = True  # True recommended
 
+        self.initialize()       # this has to happen in __init__()
+
     def initialize(self):
         """ Starts the connection to the device."""
         self.logger.debug('Opening connection to device.')
@@ -255,7 +257,7 @@ if __name__ == "__main__":
                         'controller': 'hyperion.controller.generic.generic_serial_contr/GenericSerialController'}
 
     with BeamFlagsInstr(settings = example_settings) as bf:
-        bf.initialize()
+        # bf.initialize()   # THIS WAS MOVED INTO __init__()
 
         # bf._announce(False)   # For testing "dumb" mode without _use_passive_queries
 

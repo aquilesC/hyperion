@@ -5,7 +5,7 @@ Instruments:
     dummy: False
     baudrate: 9600
     read_timeout: 0.1
-    instrument: hyperion.instrument.beam_flags.beam_flags_instr/BeamFlags
+    instrument: hyperion.instrument.beam_flags.beam_flags_instr/BeamFlagsInstr
     controller: hyperion.controller.generic.generic_serial_contr/GenericSerialController
     view: hyperion.view.beam_flags.beam_gui/BeamFlagsGui
     flag_states:

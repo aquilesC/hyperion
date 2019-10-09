@@ -420,12 +420,12 @@ class MasterGui(QMainWindow):
         """
         self.logger.info('Loading instrument: {}'.format(name))
         try:
-            dictionairy = self.experiment.properties['Instruments'][name]
-            self.logger.debug('Instruments list: {}'.format(dictionairy))
-            module_name, class_name = dictionairy['view'].split('/')
+            instr_config = self.experiment.properties['Instruments'][name]
+            self.logger.debug('Instruments list: {}'.format(instr_config))
+            module_name, class_name = instr_config['view'].split('/')
             MyClass = getattr(importlib.import_module(module_name), class_name)
             #instr is variable that will be the instrument name of a device. For example: OsaInstrument.
-            instr = ((dictionairy['instrument']).split('/')[1])
+            instr = ((instr_config['instrument']).split('/')[1])
             #self.experiment.instruments_instances[instr] = the name of the instrument for a device. This is necessary
             #to communicate between instrument and view. Instance is still an instance of for example OsaView.
             self.logger.debug('Current view class: {}'.format(MyClass))
