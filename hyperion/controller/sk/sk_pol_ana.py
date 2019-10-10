@@ -20,7 +20,8 @@ class Skpolarimeter(BaseController):
     """ This is the controller for the SK polarimeter. Based on their dll.
 
     """
-    def __init__(self, settings = {'dll_name': 'SKPolarimeter'}):
+    def __init__(self, settings = {'dll_name': 'SKPolarimeter',
+                                   'dll_path': 'C:/Users/mcaldarola/surfdrive/NanoCD/Setup/SK/SKPolarimeterMFC_VS2015_x64/x64/Release/'}):
         """ Init method for the class
 
         """
@@ -32,7 +33,7 @@ class Skpolarimeter(BaseController):
         # TODO: put this in a config_agilent33522A.yml file so the code doe not depend on the location (PC)
         # path = 'C:/Users/mcaldarola/Documents/SK Develop/SKPolarizationAnalyzer/'
         # name = 'SKPolarimeterManaged'
-        path = 'C:/Users/mcaldarola/surfdrive/NanoCD/Setup/SK/SKPolarimeterMFC_VS2015_x64/x64/Release/'
+        path = settings['dll_path']
         name = settings['dll_name'] # = 'SKPolarimeter'
         self.logger.debug('DLL to use: {}'.format(path + name))
         self.dll = ctypes.CDLL(path + name)
@@ -229,7 +230,8 @@ if __name__ == "__main__":
                                                                  backupCount=_logger_settings['backupCount']),
                             logging.StreamHandler()])
 
-    with Skpolarimeter() as s:
+    with Skpolarimeter(settings={'dll_name': 'SKPolarimeter',
+                                'dll_path': 'C:/Users/mcaldarola/surfdrive/NanoCD/Setup/SK/SKPolarimeterMFC_VS2015_x64/x64/Release/'}) as s:
         # get the info needed to open connection
         s.get_number_polarizers()
         s.get_device_information()
