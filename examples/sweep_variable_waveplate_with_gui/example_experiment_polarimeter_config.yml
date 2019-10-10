@@ -18,7 +18,7 @@ Instruments:
 #    dummy: False
   BeamFlags:
     name: BeamFlags
-    port: COM4
+    port: COM3
     dummy: False
     baudrate: 9600
     read_timeout: 0.1

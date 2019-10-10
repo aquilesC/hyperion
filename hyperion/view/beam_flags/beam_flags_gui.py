@@ -27,7 +27,7 @@ class BeamFlagsGui(QWidget):
 
         self.left = 400
         self.top = 400
-        self.width = 240
+        self.width = 300
         self.height = 80
 
         self.bfi = beam_flags_instr
