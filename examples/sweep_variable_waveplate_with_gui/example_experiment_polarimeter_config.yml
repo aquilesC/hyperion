@@ -2,20 +2,46 @@ User:
   name: Martin and Aron
 
 Instruments:
-  Polarimeter:
-    'dll_name': 'SKPolarimeter'
-    instrument: hyperion.instrument.polarimeter.polarimeter/Polarimeter
-    controller: hyperion.controller.sk.sk_pol_ana/Skpolarimeter
-    view: hyperion.view.polarimeter.polarimeter_gui/PolarimeterGui
-    graphView:  hyperion.view.polarimeter.polarimeter_gui/Graph
+#  Polarimeter:
+#    'dll_name': 'SKPolarimeter'
+#    instrument: hyperion.instrument.polarimeter.polarimeter/Polarimeter
+#    controller: hyperion.controller.sk.sk_pol_ana/Skpolarimeter
+#    view: hyperion.view.polarimeter.polarimeter_gui/PolarimeterGui
+#    graphView:  hyperion.view.polarimeter.polarimeter_gui/Graph
+#    dummy: False
+#  VariableWaveplate:
+#    controller: hyperion.controller.thorlabs.lcc25/Lcc
+#    instrument: hyperion.instrument.variable_waveplate.variable_waveplate/VariableWaveplate
+#    view: hyperion.view.variable_waveplate.variable_waveplate_gui/VariableWaveplateGui
+#    port: COM8
+#    enable: False
+#    dummy: False
+  BeamFlags:
+    name: BeamFlags
+    port: COM4
     dummy: False
-  VariableWaveplate:
-    controller: hyperion.controller.thorlabs.lcc25/Lcc
-    instrument: hyperion.instrument.variable_waveplate.variable_waveplate/VariableWaveplate
-    view: hyperion.view.variable_waveplate.variable_waveplate_gui/VariableWaveplateGui
-    port: COM8
-    enable: False
-    dummy: False
+    baudrate: 9600
+    read_timeout: 0.1
+    instrument: hyperion.instrument.beam_flags.beam_flags_instr/BeamFlagsInstr
+    controller: hyperion.controller.generic.generic_serial_contr/GenericSerialController
+    view: hyperion.view.beam_flags.beam_flags_gui/BeamFlagsGui
+    flag_states:
+      red:   'r'                # character for arduino red state
+      green: 'g'                # character for arduino green state
+    gui_red_color:   rgb(255, 100, 100)
+    gui_green_color: rgb(100, 255, 100)
+    gui_state_update_ms: 100    # recommend 100,  update time in ms for the state indicators
+    gui_flags:
+      '1':                      # key-name should be the id-character for the arduino controller
+        name: Pump
+        red_name: Blocked
+        green_name: Open
+        shortkey: Ctrl+1
+      '2':
+        name: Probe
+        red_name: Blocked
+        green_name: Open
+        shortkey: Ctrl+2
 #  ExampleInstrument:
 #    port: COM0
 #    instrument: hyperion.instrument.example_instrument/ExampleInstrument
@@ -71,11 +97,6 @@ MetaInstruments:
     z: testMotor
 
 Measurements:
-  # specific for this experiment
-  # list of measurement views which need to be loaded and accessible for the main experiment class.
-#  exampleMeasurement:
-#    view: examples.measurement_gui/App
-#    graphView: hyperion.view.osa.osa_gui/DrawSpectrum
   SweepWaveplate:
     view: examples.sweep_variable_waveplate_with_gui.measurement_guis/SweepWaveplatePolarimeterGui
     graphView: examples.sweep_variable_waveplate_with_gui.measurement_guis/SweepWaveplatePolarimeterGraph
@@ -86,7 +107,8 @@ Measurements:
       stabilization: 10ms
       average: 1
       wavelength: 536nm
-
+  FlagsExampleMeasurementGui:
+    view: examples.sweep_variable_waveplate_with_gui.measurement_guis/FlagsExampleMeasurementGui
 
 Data:
   save_folder: C:\Users\ariel\Desktop\Delft_code\hyperion\

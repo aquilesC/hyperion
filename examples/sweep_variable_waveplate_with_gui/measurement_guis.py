@@ -105,3 +105,39 @@ class SweepWaveplatePolarimeterGraph(BaseGraph):
         self.width = 640
         self.height = 480
         self.initUI()
+
+
+
+class FlagsExampleMeasurementGui(QWidget):
+    """"
+    Simple measurement gui which can only be accessed by making an instance of this class.
+    """
+    def __init__(self, experiment, plot_window):
+        super().__init__()
+        self.logger = logging.getLogger(__name__)
+        self.title = 'FlagsExmapleMeasurementGui'
+        self.left = 50
+        self.top = 50
+        self.width = 320
+        self.height = 200
+        self.experiment = experiment
+        self.plot_window = plot_window
+
+        self.initUI()
+
+
+    def initUI(self):
+        self.logger.debug('Setting up FlagsExmapleMeasurementGui')
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
+
+        self.start_button = QPushButton('Start Flags', self)
+        self.start_button.setToolTip('This is an example button')
+        self.start_button.move(100, 70)
+        self.start_button.clicked.connect(self.start_button_clicked)
+
+        self.show()
+
+    def start_button_clicked(self):
+
+        self.experiment.meas_example_flags()
