@@ -11,6 +11,7 @@
     :copyright: 2019 by Hyperion Authors, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import logging
 from pyvisa import constants
 from lantz.core import Action, Feat
 from lantz.core import MessageBasedDriver
@@ -206,7 +207,9 @@ class Cobolt08NLD(MessageBasedDriver):
         return self.query('gom?')[1:]
 
 if __name__ == '__main__':
-    lantz.log.log_to_screen(lantz.log.DEBUG)
+    #import hyperion
+    #hyperion.file_logger.setLevel(logging.INFO)
+    lantz.log.log_to_screen(lantz.log.INFO)
     from hyperion import Q_
 
     with Cobolt08NLD.via_serial('5') as inst:
@@ -220,7 +223,7 @@ if __name__ == '__main__':
         print('Power setpoint: {}'.format(inst.power_sp))
         inst.power_sp = Q_(150,'milliwatt')
         print('Power setpoint: {}'.format(inst.power_sp))
-        inst.power_sp = 200
+        inst.power_sp = Q_(90,'milliwatt')
         print('Power setpoint: {}'.format(inst.power_sp))
         print('Output power now: {}'.format(inst.power))
 
