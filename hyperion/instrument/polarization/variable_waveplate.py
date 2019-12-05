@@ -10,7 +10,6 @@ waveplate a quarter waveplate for a given wavelength.
 
 
 """
-import logging
 from time import sleep
 import os
 import numpy as np

@@ -138,6 +138,7 @@ class Cobolt08NLD(MessageBasedDriver):
 
     @power_sp.setter
     def power_sp(self, value):
+        self.log_warning('TEST')
         self.query('p {:.5f}'.format(value / 1000))
 
     # LASER'S CURRENT STATUS
@@ -168,35 +169,35 @@ class Cobolt08NLD(MessageBasedDriver):
         """
         self.query('em')
 
-    @Feat(values={True: '1', False: '0'})
-    def digital_mod(self):
-        """digital modulation enable state
-        """
-        return self.query('gdmes?')[1:]
+    # @Feat(values={True: '1', False: '0'})
+    # def digital_mod(self):
+    #     """digital modulation enable state
+    #     """
+    #     return self.query('gdmes?')[1:]
+    #
+    # @digital_mod.setter
+    # def digital_mod(self, value):
+    #     self.query('gdmes ' + value)
 
-    @digital_mod.setter
-    def digital_mod(self, value):
-        self.query('gdmes ' + value)
+    # @Feat(values={True: '1', False: '0'})
+    # def analog_mod(self):
+    #     """analog modulation enable state
+    #     """
+    #     return self.query('games?')[1:]
+    #
+    # @analog_mod.setter
+    # def analog_mod(self, value):
+    #     self.query('sames ' + value)
 
-    @Feat(values={True: '1', False: '0'})
-    def analog_mod(self):
-        """analog modulation enable state
-        """
-        return self.query('games?')[1:]
-
-    @analog_mod.setter
-    def analog_mod(self, value):
-        self.query('sames ' + value)
-
-    @Feat(values={True: '1', False: '0'})
-    def analogli_mod(self):
-        """analog modulation enable state
-        """
-        return self.query('galis?')[1:]
-
-    @analogli_mod.setter
-    def analogli_mod(self, value):
-        self.query('salis ' + value)
+    # @Feat(values={True: '1', False: '0'})
+    # def analogli_mod(self):
+    #     """analog modulation enable state
+    #     """
+    #     return self.query('galis?')[1:]
+    #
+    # @analogli_mod.setter
+    # def analogli_mod(self, value):
+    #     self.query('salis ' + value)
 
     @Feat(values={'Waiting for key': '1', 'Off': '0', 'Continuous': '2',
                   'On/Off Modulation': '3', 'Modulation': '4', 'Fault': '5',
@@ -212,19 +213,30 @@ if __name__ == '__main__':
     lantz.log.log_to_screen(lantz.log.INFO)
     from hyperion import Q_
 
-    with Cobolt08NLD.via_serial('5') as inst:
 
-        print('Identification: {}'.format(inst.idn))
-        print('Enabled = {}'.format(inst.enabled))
-        print('used hours = {} hs'.format(inst.operating_hours))
-        print('Laser mode: {}'.format(inst.ctl_mode))
-        print('Laser interlock state: {}'.format(inst.interlock))
-        print('Autostart status: {}'.format(inst.autostart))
-        print('Power setpoint: {}'.format(inst.power_sp))
-        inst.power_sp = Q_(150,'milliwatt')
-        print('Power setpoint: {}'.format(inst.power_sp))
-        inst.power_sp = Q_(90,'milliwatt')
-        print('Power setpoint: {}'.format(inst.power_sp))
-        print('Output power now: {}'.format(inst.power))
+    gui = False
+
+    if gui:
+        from lantz.qt.app import start_test_app
+
+        with Cobolt08NLD.via_serial('5') as inst:
+            start_test_app(inst)
+    else:
+        with Cobolt08NLD.via_serial('5') as inst:
+
+            print('Identification: {}'.format(inst.idn))
+            print('Enabled = {}'.format(inst.enabled))
+            print('used hours = {} hs'.format(inst.operating_hours))
+            print('Laser mode: {}'.format(inst.ctl_mode))
+            print('Laser interlock state: {}'.format(inst.interlock))
+            print('Autostart status: {}'.format(inst.autostart))
+            print('Power setpoint: {}'.format(inst.power_sp))
+            inst.power_sp = Q_(150,'milliwatt')
+            print('Power setpoint: {}'.format(inst.power_sp))
+            inst.power_sp = Q_(90,'milliwatt')
+            print('Power setpoint: {}'.format(inst.power_sp))
+            print('Output power now: {}'.format(inst.power))
+
+
 
 

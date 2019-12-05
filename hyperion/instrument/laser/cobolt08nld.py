@@ -9,17 +9,14 @@ It ads the use of units with pint
 """
 import logging
 from hyperion import ur, Q_
-from hyperion.controller.cobolt.cobolt08NLD import Cobolt08NLD
 from hyperion.instrument.base_instrument import BaseInstrument
 
 
-class CoboltLaser(BaseInstrument, Cobolt08NLD):
+class CoboltLaser(BaseInstrument):
     """ This class is to control the laser.
 
     """
-    def __init__(self, settings={'dummy': False,
-                                 'controller': 'hyperion.controller.cobolt.cobolt08NLD/Cobolt08NLD',
-                                 'via_serial': 'COM5'}):
+    def __init__(self, settings):
         """ init of the class"""
         super().__init__(settings)
         self.logger = logging.getLogger(__name__)
@@ -64,7 +61,7 @@ class CoboltLaser(BaseInstrument, Cobolt08NLD):
 
 if __name__ == '__main__':
     import hyperion
-    hyperion.file_logger.setLevel(logging.INFO)
+    #hyperion.file_logger.setLevel(logging.INFO)
 
 
     with CoboltLaser(settings={'dummy': False,
@@ -72,7 +69,7 @@ if __name__ == '__main__':
                                'via_serial': 'COM5'}) as d:
 
         # #### test idn
-        print('Identification = {}.'.format(d.idn()))
+        #print('Identification = {}.'.format(d.controller.idn()))
         print('power {}'.format(d.power_sp))
-        d.power_sp = Q_(110,'mW')
-        print('power {}'.format(d.controller.power_sp))
+        d.power_sp = Q_(115,'mW')
+        print('power {}'.format(d.power_sp))
