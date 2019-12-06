@@ -14,7 +14,8 @@ from time import sleep
 import os
 import numpy as np
 from hyperion.instrument.base_instrument import BaseInstrument
-from hyperion import ur, root_dir, logger
+from hyperion import ur, root_dir
+from hyperion import log as logging
 
 
 class VariableWaveplate(BaseInstrument):
@@ -44,8 +45,7 @@ class VariableWaveplate(BaseInstrument):
 
         """
         super().__init__(settings)
-        self.logger = logger
-        self.logger.name = __name__
+        self.logger = logging.getLogger(__name__)
         self._port = settings['port']
 
         # property
@@ -336,6 +336,8 @@ class VariableWaveplate(BaseInstrument):
 
 
 if __name__ == '__main__':
+    logging.stream_level = logging.INFO
+    logger = logging.getLogger(__name__)
 
     dummy_mode = [False] # add here false to unit_test the code with the real device
 

@@ -445,11 +445,9 @@ class LccDummy(Lcc):
         return self._response[-1]
 
 if __name__ == "__main__":
-    import hyperion
-    from hyperion import log as logging
+    logging.stream_level = logging.INFO
     logger = logging.getLogger(__name__)
-    # import logging
-    hyperion.file_logger.setLevel(logging.INFO)
+
 
     # this is to print the serial ports connected to the PC
     # import serial.tools.list_ports
@@ -468,7 +466,7 @@ if __name__ == "__main__":
 
     with my_class(settings={'port':'COM8', 'dummy':dummy}) as dev:
         dev.initialize()
-        print(dev.get_voltage(1))
+        print('Dev voltage: {}'.format(dev.get_voltage(1)))
         # output status and set
         # logging.info('The output is: {}'.format(dev.output))
         # dev.output = True

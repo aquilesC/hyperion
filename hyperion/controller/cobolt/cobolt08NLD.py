@@ -207,11 +207,8 @@ class Cobolt08NLD(MessageBasedDriver):
         return self.query('gom?')[1:]
 
 if __name__ == '__main__':
-    #import hyperion
-    #hyperion.file_logger.setLevel(logging.INFO)
     lantz.log.log_to_screen(lantz.log.INFO)
     from hyperion import Q_
-
 
     gui = False
 
