@@ -95,8 +95,6 @@ _logger_format_short = '%(asctime)s |%(module)+22s | %(funcName)+22s()|%(levelna
 _logger_format = _logger_format_long
 _logger_settings = {'filename':'logger.log', 'maxBytes':(1048576 * 5), 'backupCount':7}
 
-logging.Logger
-
 # create handler for stream logging:
 stream_logger = logging.StreamHandler()
 # stream_logger.setFormatter(logging.Formatter(_logger_format_short, '%H:%M:%S')) # adding the ,'%H:%M:%S' changes the timestamp to the short version
@@ -115,11 +113,24 @@ file_logger.addFilter(DuplicateFilter())
 # set these handlers as default
 # (note that the base level needs to be set to lowest level i.e. logging.DEBUG)
 #logging.basicConfig(level=logging.DEBUG, handlers=[file_logger, stream_logger])
+class log():
+    def __init__(self):
+        pass
 
-logger = logging.Logger(__name__)
-logger.addHandler(file_logger)
-logger.addHandler(stream_logger)
+    CRITICAL = logging.CRITICAL
+    ERROR = logging.ERROR
+    WARNING = logging.WARNING
+    WARN = logging.WARN
+    INFO = logging.INFO
+    DEBUG = logging.DEBUG
 
+    @classmethod
+    def getLogger(cls, name):
+        logger = logging.Logger(name)
+        logger.addHandler(file_logger)
+        logger.addHandler(stream_logger)
+
+        return logger
 
 # Function for changing the logger file:
 # (apparently you have to remove, re-create and add the handler )

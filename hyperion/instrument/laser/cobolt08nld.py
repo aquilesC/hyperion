@@ -7,8 +7,7 @@ Instrument for the laser 08NLD laser
 This class is the instrument layer to control the Cobolt laser model 08-NLD
 It ads the use of units with pint
 """
-import logging
-from hyperion import ur, Q_
+from hyperion import ur, Q_, logger
 from hyperion.instrument.base_instrument import BaseInstrument
 
 
@@ -19,7 +18,8 @@ class CoboltLaser(BaseInstrument):
     def __init__(self, settings):
         """ init of the class"""
         super().__init__(settings)
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger
+        self.logger.name = __name__
         self.logger.info('Class CoboltLaser Instrument created.')
 
         self.initialize()
@@ -60,8 +60,8 @@ class CoboltLaser(BaseInstrument):
 
 
 if __name__ == '__main__':
-    import hyperion
-    #hyperion.file_logger.setLevel(logging.INFO)
+    import lantz.core.log
+    lantz.log.log_to_screen(lantz.log.INFO)
 
 
     with CoboltLaser(settings={'dummy': False,

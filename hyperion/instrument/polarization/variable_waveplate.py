@@ -14,7 +14,7 @@ from time import sleep
 import os
 import numpy as np
 from hyperion.instrument.base_instrument import BaseInstrument
-from hyperion import ur, root_dir
+from hyperion import ur, root_dir, logger
 
 
 class VariableWaveplate(BaseInstrument):
@@ -44,7 +44,8 @@ class VariableWaveplate(BaseInstrument):
 
         """
         super().__init__(settings)
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger
+        self.logger.name = __name__
         self._port = settings['port']
 
         # property
@@ -335,15 +336,6 @@ class VariableWaveplate(BaseInstrument):
 
 
 if __name__ == '__main__':
-    from hyperion import _logger_format, _logger_settings
-
-    logging.basicConfig(level=logging.INFO, format=_logger_format,
-                        handlers=[
-                            logging.handlers.RotatingFileHandler(_logger_settings['filename'],
-                                                                 maxBytes=_logger_settings['maxBytes'],
-                                                                 backupCount=_logger_settings['backupCount']),
-                            logging.StreamHandler()])
-
 
     dummy_mode = [False] # add here false to unit_test the code with the real device
 
@@ -352,28 +344,28 @@ if __name__ == '__main__':
         with VariableWaveplate(settings = {'port':'COM8', 'enable': False, 'dummy' : dummy,
                                        'controller': 'hyperion.controller.thorlabs.lcc25/Lcc'}) as dev:
             #  output status and set
-            logging.info('The output is: {}'.format(dev.output))
+            logger.info('The output is: {}'.format(dev.output))
             dev.output = True
-            logging.info('The output is: {}'.format(dev.output))
+            logger.info('The output is: {}'.format(dev.output))
 
             # mode
-            logging.info('The mode is: {}'.format(dev.mode))
+            logger.info('The mode is: {}'.format(dev.mode))
             for m in range(4):
                 dev.mode = dev.MODES[m]
-                logging.info('The mode is: {}'.format(dev.mode))
+                logger.info('The mode is: {}'.format(dev.mode))
 
             # set voltage for both channels
             for ch in range(1, 2):
-                logging.info('Current voltage for channel {} is {}'.format(ch, dev.get_analog_value(ch)))
+                logger.info('Current voltage for channel {} is {}'.format(ch, dev.get_analog_value(ch)))
                 dev.set_analog_value(ch, 1*ur('volt') )
-                logging.info('Current voltage for channel {} is {}'.format(ch, dev.get_analog_value(ch)))
+                logger.info('Current voltage for channel {} is {}'.format(ch, dev.get_analog_value(ch)))
 
             # unit_test freq
-            logging.info('Current freq: {}'.format(dev.freq))
+            logger.info('Current freq: {}'.format(dev.freq))
             Freqs = [1, 10, 20, 60, 100] * ur('Hz')
             for f in Freqs:
                 dev.freq = f
-                logging.info('Current freq: {}'.format(dev.freq))
+                logger.info('Current freq: {}'.format(dev.freq))
 
             # set the quater waveplate voltage in voltage1
             wavelength = 633* ur('nanometer')

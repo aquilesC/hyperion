@@ -13,7 +13,7 @@ with your program at every step.
 
 
 """
-from hyperion import logger
+from hyperion import log as logging
 
 class BaseController():
     """ General class for controller. Use it as parent of your (home-made) controller.
@@ -23,8 +23,7 @@ class BaseController():
         """ Init for the class
 
         """
-        self.logger = logger
-        self.logger.name = __name__
+        self.logger = logging.getLogger(__name__)
         self._is_initialized = False
         self._settings = settings
 

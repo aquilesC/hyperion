@@ -15,7 +15,8 @@ import os
 import serial
 import yaml
 from time import sleep, time
-from hyperion import ur, root_dir, logger
+from hyperion import ur, root_dir
+from hyperion import log as logging
 from hyperion.controller.base_controller import BaseController
 
 
@@ -44,8 +45,7 @@ class Lcc(BaseController):
 
         """
         super().__init__()  # runs the init of the base_controller class.
-        self.logger = logger
-        self.logger.name = __name__
+        self.logger = logging.getLogger(__name__)
         self.name = 'lcc25'
         self._port = settings['port']
         self.dummy = settings['dummy']
@@ -445,7 +445,11 @@ class LccDummy(Lcc):
         return self._response[-1]
 
 if __name__ == "__main__":
-    #logger.setLevel(logging.DEBUG)
+    import hyperion
+    from hyperion import log as logging
+    logger = logging.getLogger(__name__)
+    # import logging
+    hyperion.file_logger.setLevel(logging.INFO)
 
     # this is to print the serial ports connected to the PC
     # import serial.tools.list_ports
