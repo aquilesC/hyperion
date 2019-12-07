@@ -10,10 +10,11 @@ This controller (osa.py) supplies one class with several methods to communicate
     :copyright: 2019 by Hyperion Authors, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import logging
 import visa
 import time
 from hyperion.controller.base_controller import BaseController
+from hyperion import log as logging
+
 
 class OsaController(BaseController):
     """ The controller for the Osa machine."""
@@ -309,8 +310,6 @@ class OsaControllerDummy(OsaController):
 
 
 if __name__ == "__main__":
-    import hyperion
-    hyperion.stream_logger.setLevel(logging.DEBUG)
 
     dummy = True  # change this to false to work with the real device in the COM specified below.
 

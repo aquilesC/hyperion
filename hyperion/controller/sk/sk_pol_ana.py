@@ -13,9 +13,10 @@ For now it only supports one polarization analyzer connected.
     :license: BSD, see LICENSE for more details.
 """
 import ctypes
-import logging
-from time import time, sleep
+from time import time
 from hyperion.controller.base_controller import BaseController
+from hyperion import log as logging
+
 
 class Skpolarimeter(BaseController):
     """ This is the controller for the SK polarization. Based on their dll.
@@ -24,17 +25,14 @@ class Skpolarimeter(BaseController):
         :type settings: dict
 
     """
-    def __init__(self, settings = {'dll_name': 'SKPolarimeter'}):
-        """ Init method for the class
-
-        """
+    def __init__(self, settings = {'dll_name': 'SKPolarimeter',
+                                   'dll_path':
+                                    'C:/Users/mcaldarola/surfdrive/NanoCD/Setup/SK/SKPolarimeterMFC_VS2015_x64/x64/Release/'}):
         super().__init__()  # runs the init of the base_controller class.
         self.logger = logging.getLogger(__name__)
         self.name = 'SK polarization'
         self.logger.debug('Is initialized state: {}'.format(self._is_initialized))
-
-        # TODO: put this in a config file so the code doe not depend on the location (PC)
-        path = 'C:/Users/mcaldarola/surfdrive/NanoCD/Setup/SK/SKPolarimeterMFC_VS2015_x64/x64/Release/'
+        path = settings['dll_path']
         name = settings['dll_name']
         self.logger.debug('DLL to use: {}'.format(path + name))
         self.dll = ctypes.CDLL(path + name)
@@ -224,10 +222,10 @@ class SkpolarimeterDummy(BaseController):
 
 
 if __name__ == "__main__":
-    import hyperion
-    hyperion.stream_logger.setLevel(logging.DEBUG)
 
-    with Skpolarimeter() as s:
+    with Skpolarimeter(settings = {'dll_name': 'SKPolarimeter',
+                                   'dll_path':
+                                    'C:/Users/mcaldarola/surfdrive/NanoCD/Setup/SK/SKPolarimeterMFC_VS2015_x64/x64/Release/'}) as s:
         # get the info needed to open connection
         s.get_number_polarizers()
         s.get_device_information()

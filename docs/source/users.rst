@@ -6,8 +6,7 @@ If you just want to use some of the controllers to connect your computer
 to your devices, this is the place to start.
 
 First, make sure you install the package correctly, following the
-instructions at: TO_BE_COMPLETED
-
+instructions in the readme file of the project.
 
 A nice place to start looking for examples on how to use
 the package is the examples folder.
@@ -29,15 +28,35 @@ This way, you can have immediate feedback and also a file where you can search f
 information and post-process.
 
 Since we want to use the same 'logger' in the project, we defined it in the init where
-we called it 'log'. To use it in your classes, you need to do
+we called it 'log'. To use it in your classes, you need to do:
 
 >>> from hyperion import log
->>> logger = log.getLogger()
+>>> logger = log.getLogger(__name__)
 >>> logger.info('An info message')
-18:31:43 |                              hyperion | <module>()            |    INFO | An info message
+>>> logger.debug('A debug message')
+16:54:49 |                              hyperion | <module>()            |    INFO | An info message
+16:54:49 |                              __main__ | <module>()            |   DEBUG | A debug message
 
 At the same time, it will save the same message in a folder called *logs* next to the
 root folder containing the hyperion package in a file called hyperion.log
+
+You may notice that in many of our classes we import the package with
+the name 'logging' which can generate problems if you also use the
+python standard logging package. We did this for backwards compatibility
+of our code, for new code we recommend to follow the example above.
+
+The default level for the log in the file and the screen is DEBUG.
+in order to change it to any other option on the standard logging package,
+for example, INFO, you have to do:
+
+>>> from hyperion import log
+>>> log.stream_level = logging.INFO
+>>> logger = log.getLogger(__name__)
+>>> logger.info('An info message')
+>>> logger.debug('A debug message')
+16:54:49 |                              hyperion | <module>()            |    INFO | An info message
+
+so you only see the level INFO.
 
 
 
