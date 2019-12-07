@@ -14,9 +14,9 @@
 import os
 import serial
 import yaml
-import logging
 from time import sleep, time
 from hyperion import ur, root_dir
+from hyperion import log as logging
 from hyperion.controller.base_controller import BaseController
 
 
@@ -445,15 +445,16 @@ class LccDummy(Lcc):
         return self._response[-1]
 
 if __name__ == "__main__":
-    import hyperion
-    hyperion.stream_logger.setLevel(logging.DEBUG)
+    logging.stream_level = logging.INFO
+    logger = logging.getLogger(__name__)
+
 
     # this is to print the serial ports connected to the PC
-    import serial.tools.list_ports
-
-    comports = serial.tools.list_ports.comports()
-    for port, desc, hwid in comports:
-        print((port, desc, hwid))
+    # import serial.tools.list_ports
+    #
+    # comports = serial.tools.list_ports.comports()
+    # for port, desc, hwid in comports:
+    #     print((port, desc, hwid))
 
 
     dummy = False  # change this to false to work with the real device in the COM specified below.
@@ -465,7 +466,7 @@ if __name__ == "__main__":
 
     with my_class(settings={'port':'COM8', 'dummy':dummy}) as dev:
         dev.initialize()
-        print(dev.get_voltage(1))
+        print('Dev voltage: {}'.format(dev.get_voltage(1)))
         # output status and set
         # logging.info('The output is: {}'.format(dev.output))
         # dev.output = True
@@ -479,10 +480,10 @@ if __name__ == "__main__":
 
         # set voltage for both channels
         for ch in range(1,2):
-            logging.info('Current voltage for channel {} is {}'.format(ch,dev.get_voltage(ch)))
+            logger.info('Current voltage for channel {} is {}'.format(ch,dev.get_voltage(ch)))
             dev.set_voltage(ch, 1*ur('volts'))
             #print( dev.read_serial_buffer_in() )
-            logging.info('Current voltage for channel {} is {}'.format(ch,dev.get_voltage(ch)))
+            logger.info('Current voltage for channel {} is {}'.format(ch,dev.get_voltage(ch)))
 
         # unit_test freq
         # logging.info('Current freq: {}'.format(dev.freq))

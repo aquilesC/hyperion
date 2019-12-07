@@ -11,8 +11,8 @@ a method to unit_test the new methods in the instrument, if any.
 
 
 """
-import logging
 from time import sleep
+from hyperion import log as logging
 from hyperion import ur
 from hyperion.instrument.polarization.variable_waveplate import VariableWaveplate
 
@@ -89,11 +89,7 @@ class UTestVariableWaveplate():
         self.logger.info('Mode unit_test passed')
 
 if __name__ == "__main__":
-    from hyperion import _logger_format
-    logging.basicConfig(level=logging.INFO, format=_logger_format,
-                        handlers=[
-                            logging.handlers.RotatingFileHandler("logger.log", maxBytes=(1048576 * 5), backupCount=7),
-                            logging.StreamHandler()])
+
 
     dummy_mode = [True]  # add false here to also unit_test the real device with connection
     true_port = 'COM8'

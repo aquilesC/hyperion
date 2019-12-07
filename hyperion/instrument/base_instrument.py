@@ -11,7 +11,7 @@ you wrote the driver by hand (not using other library but the communication).
 
 
 """
-import logging
+from hyperion import log as logger
 import importlib
 
 class BaseInstrument():
@@ -23,7 +23,7 @@ class BaseInstrument():
         """ Init for the class
 
         """
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger.getLogger(__name__)
         self.logger.info('Class BaseInstrument created with settings: {}'.format(settings))
         self.settings = settings
 

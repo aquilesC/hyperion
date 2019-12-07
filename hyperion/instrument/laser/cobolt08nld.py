@@ -7,19 +7,16 @@ Instrument for the laser 08NLD laser
 This class is the instrument layer to control the Cobolt laser model 08-NLD
 It ads the use of units with pint
 """
-import logging
 from hyperion import ur, Q_
-from hyperion.controller.cobolt.cobolt08NLD import Cobolt08NLD
+from hyperion import log as logging
 from hyperion.instrument.base_instrument import BaseInstrument
 
 
-class CoboltLaser(BaseInstrument, Cobolt08NLD):
+class CoboltLaser(BaseInstrument):
     """ This class is to control the laser.
 
     """
-    def __init__(self, settings={'dummy': False,
-                                 'controller': 'hyperion.controller.cobolt.cobolt08NLD/Cobolt08NLD',
-                                 'via_serial': 'COM5'}):
+    def __init__(self, settings):
         """ init of the class"""
         super().__init__(settings)
         self.logger = logging.getLogger(__name__)
@@ -63,19 +60,16 @@ class CoboltLaser(BaseInstrument, Cobolt08NLD):
 
 
 if __name__ == '__main__':
-    from hyperion import _logger_format
+    import lantz.core.log
+    lantz.log.log_to_screen(lantz.log.INFO)
 
-    logging.basicConfig(level=logging.INFO, format=_logger_format,
-                        handlers=[
-                            logging.handlers.RotatingFileHandler("logger.log", maxBytes=(1048576 * 5), backupCount=7),
-                            logging.StreamHandler()])
 
     with CoboltLaser(settings={'dummy': False,
                                'controller': 'hyperion.controller.cobolt.cobolt08NLD/Cobolt08NLD',
                                'via_serial': 'COM5'}) as d:
 
         # #### test idn
-        print('Identification = {}.'.format(d.idn()))
+        #print('Identification = {}.'.format(d.controller.idn()))
         print('power {}'.format(d.power_sp))
-        d.power_sp = Q_(110,'mW')
-        print('power {}'.format(d.controller.power_sp))
+        d.power_sp = Q_(115,'mW')
+        print('power {}'.format(d.power_sp))
