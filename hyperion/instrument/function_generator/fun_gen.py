@@ -10,11 +10,10 @@ It ads the use of units with pint.
 """
 import os
 import yaml
-import logging
 from time import sleep
 from hyperion import ur, root_dir
 from hyperion.instrument.base_instrument import BaseInstrument
-
+from hyperion import log as logging
 
 class FunGen(BaseInstrument):
     """ This class is to control the function generator.
@@ -425,8 +424,7 @@ class FunGen(BaseInstrument):
 
 
 if __name__ == '__main__':
-    import hyperion
-    hyperion.stream_logger.setLevel(logging.INFO)
+    logging.stream_level = logging.INFO
 
     with FunGen(settings={'instrument_id' : '8967', 'dummy' : False,
                           'controller': 'hyperion.controller.agilent.agilent33522A/Agilent33522A',

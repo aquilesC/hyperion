@@ -9,11 +9,11 @@ The model is similar to the controller, but it adds specific functionalities suc
 and error descriptions
 
 """
-import logging
 from time import time, sleep
 import numpy as np
 from hyperion.instrument.base_instrument import BaseInstrument
 from hyperion import ur
+from hyperion import log as logging
 
 
 class Polarimeter(BaseInstrument):
@@ -330,10 +330,7 @@ class Polarimeter(BaseInstrument):
         return w
 
 if __name__ == "__main__":
-    import hyperion
-
-    hyperion.file_logger.setLevel(logging.DEBUG)
-    hyperion.stream_logger.setLevel(logging.DEBUG)
+    logging.stream_level = logging.INFO
 
 
     with Polarimeter(settings = {'dummy' : False,

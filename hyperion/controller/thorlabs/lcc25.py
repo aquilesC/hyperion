@@ -402,6 +402,13 @@ class LccDummy(Lcc):
         self._properties['dummy_yaml_file'] = filename  # add to the class the name of the Config file used.
         self.logger.debug('Commands list: {}'.format(self._commands))
 
+    def query(self, message):
+        """Dummy query"""
+        self.logger.debug('Sending mesage: {}'.format(message))
+        self.write(message)
+        ans = self.read()
+        self.logger.debug('Recieved message: {}'.format(ans))
+        return ans
 
     def write(self, msg):
         """Dummy write. It will compare the msg with the COMMANDS
@@ -457,7 +464,7 @@ if __name__ == "__main__":
     #     print((port, desc, hwid))
 
 
-    dummy = False  # change this to false to work with the real device in the COM specified below.
+    dummy = True  # change this to false to work with the real device in the COM specified below.
 
     if dummy:
         my_class = LccDummy

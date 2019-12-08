@@ -339,7 +339,7 @@ if __name__ == '__main__':
     logging.stream_level = logging.INFO
     logger = logging.getLogger(__name__)
 
-    dummy_mode = [False] # add here false to unit_test the code with the real device
+    dummy_mode = [True] # add here false to unit_test the code with the real device
 
     for dummy in dummy_mode:
         print('Running in dummy = {}'.format(dummy))
