@@ -6,9 +6,9 @@ UI tools
 We group many functions useful for when building GUIS.
 
 """
-import logging
 from numpy import log10
 from hyperion import Q_
+from hyperion import log as logging
 
 
 def add_pint_to_combo(comboBox_units, manual_list=None):
