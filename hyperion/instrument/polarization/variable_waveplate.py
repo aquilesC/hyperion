@@ -15,7 +15,7 @@ import os
 import numpy as np
 from hyperion.instrument.base_instrument import BaseInstrument
 from hyperion import ur, root_dir
-from hyperion import log as logging
+from hyperion import logging
 
 
 class VariableWaveplate(BaseInstrument):

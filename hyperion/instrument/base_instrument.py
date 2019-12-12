@@ -11,7 +11,7 @@ you wrote the driver by hand (not using other library but the communication).
 
 
 """
-from hyperion import log as logger
+from hyperion import logging as logger
 import importlib
 
 class BaseInstrument():

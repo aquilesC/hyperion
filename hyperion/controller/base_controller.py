@@ -13,7 +13,7 @@ with your program at every step.
 
 
 """
-from hyperion import log as logging
+from hyperion import logging
 
 class BaseController():
     """ General class for controller. Use it as parent of your (home-made) controller.
