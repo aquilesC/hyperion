@@ -16,7 +16,7 @@ import serial
 import yaml
 from time import sleep, time
 from hyperion import ur, root_dir
-from hyperion import logging
+from hyperion.core import logman as logging
 from hyperion.controller.base_controller import BaseController
 
 

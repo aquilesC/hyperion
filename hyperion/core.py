@@ -236,7 +236,7 @@ class ANSIcolorFormat:
         from hyperion.core import ANSIcolorFormat
         ansicol = ANSIcolorFormat()
         print(ansicol('Hello World','emph','r','_y'))
-        print(ansicol('Hello World')
+        print(ansicol('Hello World'))
         ansicol.enabled = False
         print(ansicol('Hello World','emph','r','_y'))
     """
@@ -783,3 +783,13 @@ class LoggingManager(metaclass=Singleton):
 
 # Initialize LoggingManager object. Import this in other modules inside this package.
 logman = LoggingManager(default_path=log_path, default_name='hyperion.log')
+
+
+if __name__ == "__main__":
+    from hyperion.core import ANSIcolorFormat
+
+    ansicol = ANSIcolorFormat()
+    print(ansicol('Hello World', 'emph', 'r', '_y'))
+    print(ansicol('Hello World'))
+    ansicol.enabled = False
+    print(ansicol('Hello World', 'emph', 'r', '_y'))
