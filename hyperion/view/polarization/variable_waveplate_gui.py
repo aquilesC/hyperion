@@ -8,13 +8,13 @@ This is the variable waveplate GUI.
 
 
 """
-import logging
 import sys, os
 from PyQt5 import uic
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QDoubleSpinBox
 from hyperion.instrument.polarization.variable_waveplate import VariableWaveplate
-from hyperion import Q_
+from hyperion import Q_, root_dir
+from hyperion import log as logging
 
 
 #todo checkout if the device is on the computer if this class can work with the variablewaveplate/lcc25
@@ -197,14 +197,9 @@ class VariableWaveplateGui(QWidget):
 
 
 if __name__ == '__main__':
-    import hyperion
-    from hyperion import root_dir
     from os import path
-
-    hyperion.file_logger.setLevel(logging.INFO)
-    hyperion.stream_logger.setLevel(logging.WARNING)
-
-    logging.info('Running vairable waveplate GUI file.')
+    log = logging.getLogger(__name__)
+    log.info('Running vairable waveplate GUI file.')
     with VariableWaveplate(settings = {'port':'COM8', 'enable': False, 'dummy' : False,
                                        'controller': 'hyperion.controller.thorlabs.lcc25/Lcc'}) as variable_waveplate_ins:
 
