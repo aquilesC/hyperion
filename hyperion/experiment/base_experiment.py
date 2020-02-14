@@ -473,6 +473,7 @@ class BaseExperiment:
         self._gui_parent = None
 
         self.filename = ''
+        self.current_filename= " " #could this be merged with self.filename" " ??
         self.config_filename = None  # load_config(filename) stores the config filename here
 
         # Measurement status flags:
@@ -952,6 +953,8 @@ class BaseExperiment:
         if actiondict['store_properties']:
             self.__store_properties = os.path.splitext(filename_complete)[0]+'.yml'
 
+        self.current_filename=filename_complete
+
     def _validate_folder_basename(self, actiondict_or_str):
         """
         Extract folder and basename for file from an actiondict or from a string.
@@ -1087,7 +1090,6 @@ class BaseExperiment:
         self.instruments_instances[name] = instance
         self.logger.debug('Instrument: {} has been loaded and added to instrument_instances'.format(name))
         return instance
-
 
     def load_meta_instrument(self, name):
         """
